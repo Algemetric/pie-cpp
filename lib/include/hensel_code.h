@@ -9,22 +9,19 @@ public:
   NTL::ZZ prime;
   int r;
   NTL::ZZ modulus;
+  NTL::ZZ code;
 
-  HenselCode(const NTL::ZZ &prime_, const long &r_exponent);
+  HenselCode(const NTL::ZZ &prime_, const long &r_exponent, const NTL::ZZ &code);
 
-  NTL::ZZ Encode(Rational &m_prime) const;
+  HenselCode operator+(HenselCode &other);
 
-  Rational Decode(NTL::ZZ &hencoded) const;
+  HenselCode operator-(HenselCode &other);
 
-  NTL::Vec<NTL::ZZ> EncodeVector(std::vector<Rational> vector) const;
+  HenselCode operator*(HenselCode &other);
 
-  std::vector<Rational> DecodeVector(NTL::Vec<NTL::ZZ> &vencoded);
-
-  NTL::ZZ Add(NTL::ZZ &h1, NTL::ZZ &h2);
-
-  NTL::ZZ Sub(NTL::ZZ &h1, NTL::ZZ &h2);
-
-  NTL::ZZ Mul(NTL::ZZ &h1, NTL::ZZ &h2);
-
-  NTL::ZZ Div(NTL::ZZ &h1, NTL::ZZ &h2);
+  HenselCode operator/(HenselCode &other);
 };
+
+HenselCode Encode(const NTL::ZZ &prime_, const long &r_exponent, Rational &m_prime);
+
+Rational Decode(const NTL::ZZ &prime_, const long &r_exponent, const HenselCode &hensel_code);

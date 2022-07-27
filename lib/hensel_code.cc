@@ -5,27 +5,51 @@
 #include <math.h>
 #include <vector>
 
-HenselCode::HenselCode(const NTL::ZZ &prime_, const long &r_exponent) {
+HenselCode::HenselCode(const NTL::ZZ &prime_, const long &r_exponent, const NTL::ZZ &code) {
   this->prime = prime_;
   this->r = r_exponent;
   this->modulus = NTL::power(this->prime, this->r);
+  this->code = code;
 }
 
-NTL::ZZ HenselCode::Encode(Rational &m_prime) const {
-  NTL::ZZ den_inv = InvMod(m_prime.denominator, power(this->prime, this->r));
+HenselCode HenselCode::operator+(HenselCode &other) {
+  NTL::ZZ code = AddMod(this->code, other.code, this->modulus);
+  return HenselCode(this->prime, this->r, code);
+}
+
+HenselCode HenselCode::operator-(HenselCode &other) {
+  NTL::ZZ code = SubMod(this->code, other.code, this->modulus);
+  return HenselCode(this->prime, this->r, code);
+}
+
+HenselCode HenselCode::operator*(HenselCode &other) {
+  NTL::ZZ code = MulMod(this->code, other.code, this->modulus);
+  return HenselCode(this->prime, this->r, code);
+}
+
+HenselCode HenselCode::operator/(HenselCode &other) {
+  NTL::ZZ other_code_inv = InvMod(other.code, this->modulus);
+  NTL::ZZ code = MulMod(this->code, other_code_inv, this->modulus);
+  return HenselCode(this->prime, this->r, code);
+}
+
+HenselCode Encode(const NTL::ZZ &prime_, const long &r_exponent, Rational &m_prime) {
+  NTL::ZZ den_inv = InvMod(m_prime.denominator, power(prime_, r_exponent));
   NTL::ZZ hencoded =
-      MulMod(m_prime.numerator, den_inv, power(this->prime, this->r));
+      MulMod(m_prime.numerator, den_inv, power(prime_, r_exponent));
+  
+  HenselCode h = HenselCode(prime_, r_exponent, hencoded);
 
-  return hencoded;
+  return h;
 }
 
-Rational HenselCode::Decode(NTL::ZZ &hencoded) const {
+Rational Decode(const NTL::ZZ &prime_, const long &r_exponent, const HenselCode &hensel_code) {
   int index = 0;
-  NTL::ZZ big_n = SqrRoot((prime - 1) / 2);
+  NTL::ZZ big_n = SqrRoot((prime_ - 1) / 2);
   NTL::Vec<NTL::ZZ> x;
   x.SetLength(2);
-  x[index] = power(this->prime, this->r);
-  x[index + 1] = hencoded;
+  x[index] = power(prime_, r_exponent);
+  x[index + 1] = hensel_code.code;
 
   NTL::Vec<NTL::ZZ> y;
   y.SetLength(2);
@@ -56,44 +80,4 @@ Rational HenselCode::Decode(NTL::ZZ &hencoded) const {
   Rational m = Rational(c, d);
 
   return m;
-}
-
-NTL::Vec<NTL::ZZ> HenselCode::EncodeVector(std::vector<Rational> vector) const {
-  NTL::Vec<NTL::ZZ> vencoded;
-  vencoded.SetLength(vector.size());
-
-  for (long i = 0; i < vencoded.length(); i++) {
-    vencoded[i] = Encode(vector[i]);
-  }
-
-  return vencoded;
-}
-
-std::vector<Rational> HenselCode::DecodeVector(NTL::Vec<NTL::ZZ> &vencoded) {
-  std::vector<Rational> vector;
-  Rational rational;
-
-  for (long i = 0; i < vencoded.length(); i++) {
-    rational = Decode(vencoded[i]);
-    vector.push_back(rational);
-  }
-
-  return vector;
-}
-
-NTL::ZZ HenselCode::Add(NTL::ZZ &h1, NTL::ZZ &h2) {
-  return AddMod(h1, h2, this->modulus);
-}
-
-NTL::ZZ HenselCode::Sub(NTL::ZZ &h1, NTL::ZZ &h2) {
-  return SubMod(h1, h2, this->modulus);
-}
-
-NTL::ZZ HenselCode::Mul(NTL::ZZ &h1, NTL::ZZ &h2) {
-  return MulMod(h1, h2, this->modulus);
-}
-
-NTL::ZZ HenselCode::Div(NTL::ZZ &h1, NTL::ZZ &h2) {
-  NTL::ZZ h2_inv = InvMod(h2, this->modulus);
-  return MulMod(h1, h2_inv, this->modulus);
 }
