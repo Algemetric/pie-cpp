@@ -81,6 +81,14 @@ then run
 ./bazel-bin/pie/demo
 ````
 
+# Testing
+
+To run all tests, execute:
+
+```bash
+bazel test --test_output=all //...
+```
+
 # PIE Features
 
 ## Rational Numbers
