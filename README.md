@@ -89,13 +89,14 @@ To run all tests, execute:
 bazel test --test_output=all //...
 ```
 
-# PIE Features
+# PIE Core Features
+**PIE** introduces the namespace `pie`.
 
 ## Rational Numbers
 **PIE** offers a *rational* data type, which can be intialized using numerators and denominators of type `NTL::ZZ`:
 
 ```cpp
-Rational a;
+pie::Rational a;
 a.numerator = NTL::ZZ(3);
 a.denominator = NTL::ZZ(5);
 ```
@@ -103,19 +104,19 @@ a.denominator = NTL::ZZ(5);
 or 
 
 ```cpp
-Rational b = Rational(NTL::ZZ(2), NTL::ZZ(7));
+pie::Rational b = pie::Rational(NTL::ZZ(2), NTL::ZZ(7));
 ```
 
 Rationals can be initialized using long numerators and denominators:
 
 ```cpp
-Rational c = Rational(17, 28);
+pie::Rational c = pie::Rational(17, 28);
 ```
 
 and from strings:
 
 ```cpp
-Rational d = StringToRational("38/15");
+pie::Rational d = pie::StringToRational("38/15");
 ```
 
 Rational instances can be printed using the `ToString` function:
@@ -127,7 +128,7 @@ std::cout << "a: " << a.ToString() << "\n";
 Rational instances are always irreducible. If a reducible rational is given as input, it will be reduced:
 
 ```cpp
-Rational e = StringToRational("18/16");
+pie::Rational e = pie::StringToRational("18/16");
 ```
 
 such that `e = 9/8`.
@@ -135,10 +136,10 @@ such that `e = 9/8`.
 ### Arithmetic 
 
 ```cpp
-Rational r1 = a + b + c + d + e;
-Rational r2 = a - b - c - d - e;
-Rational r3 = a * b * c * d * e;
-Rational r4 = a / b / c / d / e;
+pie::Rational r1 = a + b + c + d + e;
+pie::Rational r2 = a - b - c - d - e;
+pie::Rational r3 = a * b * c * d * e;
+pie::Rational r4 = a / b / c / d / e;
 ```
 
 such that `r1 = 4327/840`, `r2 = -3319/840`, `r3 = 2907/9800`, and `r4 = 392/323`.
@@ -148,18 +149,18 @@ such that `r1 = 4327/840`, `r2 = -3319/840`, `r3 = 2907/9800`, and `r4 = 392/323
 We define a prime number so we can instantiate a Hensel code object. We will use exponents equal to `1` in this demo:
 
 ```cpp
-NTL::ZZ prime = StringToZZ("16966601356614805487");
+NTL::ZZ prime = pie::StringToZZ("16966601356614805487");
 long r = 1;
 ```
 
 Given the rational nubmers we previously created, we encode each one as follows:
 
 ```cpp
-HenselCode h1 = Encode(prime, r, a);
-HenselCode h2 = Encode(prime, r, b);
-HenselCode h3 = Encode(prime, r, c);
-HenselCode h4 = Encode(prime, r, d);
-HenselCode h5 = Encode(prime, r, e);
+pie::HenselCode h1 = pie::Encode(prime, r, a);
+pie::HenselCode h2 = pie::Encode(prime, r, b);
+pie::HenselCode h3 = pie::Encode(prime, r, c);
+pie::HenselCode h4 = pie::Encode(prime, r, d);
+pie::HenselCode h5 = pie::Encode(prime, r, e);
 ```
 
 When we print the encodings we computed
@@ -185,11 +186,11 @@ h5: 2120825169576850687
 We decode the above as follows:
 
 ```cpp
-Rational h1_d = Decode(prime, r, h1);
-Rational h2_d = Decode(prime, r, h2);
-Rational h3_d = Decode(prime, r, h3);
-Rational h4_d = Decode(prime, r, h4);
-Rational h5_d = Decode(prime, r, h5);
+pie::Rational h1_d = pie::Decode(prime, r, h1);
+pie::Rational h2_d = pie::Decode(prime, r, h2);
+pie::Rational h3_d = pie::Decode(prime, r, h3);
+pie::Rational h4_d = pie::Decode(prime, r, h4);
+pie::Rational h5_d = pie::Decode(prime, r, h5);
 ```
 
 When we print the decodings we computed
@@ -215,17 +216,17 @@ h5_d: 9/8
 Now, considering `h1` and `h2` as operands, we compute the basic arithmetic operations over Hensel codes and obtain the corresponding results as follows:
 
 ```cpp
-HenselCode h6 = h1 + h2;
-Rational h6_d = Decode(prime, r, h6);
+pie::HenselCode h6 = h1 + h2;
+pie::Rational h6_d = pie::Decode(prime, r, h6);
 
-HenselCode h7 = h1 - h2;
-Rational h7_d = Decode(prime, r, h7);
+pie::HenselCode h7 = h1 - h2;
+pie::Rational h7_d = pie::Decode(prime, r, h7);
 
-HenselCode h8 = h1 * h2;
-Rational h8_d = Decode(prime, r, h8);
+pie::HenselCode h8 = h1 * h2;
+pie::Rational h8_d = pie::Decode(prime, r, h8);
 
-HenselCode h9 = h1 / h2;
-Rational h9_d = Decode(prime, r, h9);
+pie::HenselCode h9 = h1 / h2;
+pie::Rational h9_d = pie::Decode(prime, r, h9);
 ```
 
 Printing the results
