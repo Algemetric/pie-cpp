@@ -21,8 +21,8 @@ TEST(ToolsTest, RandomVector) {
   long bound = 50;
   long size1 = 3;
   long size2 = 2;
-  std::vector<Rational> v1 = GenerateRandomVector(size1, NTL::ZZ(bound));
-  std::vector<Rational> v2 = GenerateRandomVector(size2, NTL::ZZ(bound));
+  std::vector<pie::Rational> v1 = GenerateRandomVector(size1, NTL::ZZ(bound));
+  std::vector<pie::Rational> v2 = GenerateRandomVector(size2, NTL::ZZ(bound));
 
   EXPECT_EQ(size1, v1.size());
   EXPECT_TRUE((0 <= v1[0].numerator) && (v1[0].numerator < bound));
@@ -52,10 +52,10 @@ TEST(ToolsTest, VectorFromUniqueValue) {
 }
 
 TEST(ToolsTest, DotProduct) {
-  std::vector<Rational> v1 = {Rational(2, 3), Rational(4, 5), Rational(6, 7)};
-  std::vector<Rational> v2 = {Rational(8, 9), Rational(10, 11),
-                              Rational(12, 13)};
-  Rational expected_dot_product1 = Rational(57056, 27027);
+  std::vector<pie::Rational> v1 = {pie::Rational(2, 3), pie::Rational(4, 5), pie::Rational(6, 7)};
+  std::vector<pie::Rational> v2 = {pie::Rational(8, 9), pie::Rational(10, 11),
+                              pie::Rational(12, 13)};
+  pie::Rational expected_dot_product1 = pie::Rational(57056, 27027);
 
   NTL::Vec<NTL::ZZ> v3;
   v3.SetLength(3);
@@ -76,12 +76,12 @@ TEST(ToolsTest, DotProduct) {
 }
 
 TEST(ToolsTest, RationalProduct) {
-  std::vector<Rational> rationals;
-  rationals.push_back(Rational(2, 3));
-  rationals.push_back(Rational(4, 5));
-  rationals.push_back(Rational(6, 7));
+  std::vector<pie::Rational> rationals;
+  rationals.push_back(pie::Rational(2, 3));
+  rationals.push_back(pie::Rational(4, 5));
+  rationals.push_back(pie::Rational(6, 7));
 
-  Rational expected_product = Rational(16, 35);
+  pie::Rational expected_product = pie::Rational(16, 35);
 
   EXPECT_TRUE(expected_product.ToString() == Product(rationals).ToString());
 }

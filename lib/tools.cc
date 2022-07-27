@@ -21,23 +21,23 @@ NTL::ZZ GenerateNonZeroRandomInteger(const NTL::ZZ &upperbound) {
   return number;
 }
 
-Rational GenerateRandomRational(const NTL::ZZ &upperbound) {
+pie::Rational GenerateRandomRational(const NTL::ZZ &upperbound) {
   NTL::ZZ numerator = GenerateNonZeroRandomInteger(upperbound);
   NTL::ZZ denominator = GenerateNonZeroRandomInteger(upperbound);
 
-  return Rational(numerator, denominator);
+  return pie::Rational(numerator, denominator);
 }
 
-std::vector<Rational> GenerateRandomVector(const int size,
+std::vector<pie::Rational> GenerateRandomVector(const int size,
                                            const NTL::ZZ &upperbound) {
   NTL::ZZ numerator;
   NTL::ZZ denominator;
-  std::vector<Rational> vector;
+  std::vector<pie::Rational> vector;
 
   for (int i = 0; i < size; i++) {
     numerator = GenerateNonZeroRandomInteger(upperbound);
     denominator = GenerateNonZeroRandomInteger(upperbound);
-    vector.push_back(Rational(numerator, denominator));
+    vector.push_back(pie::Rational(numerator, denominator));
   }
 
   return vector;
@@ -54,10 +54,10 @@ NTL::Vec<NTL::ZZ> CreateVectorFromUniqueValue(long size, const NTL::ZZ &value) {
   return vector;
 }
 
-Rational DotProduct(std::vector<Rational> vector1,
-                    std::vector<Rational> vector2) {
-  Rational result = Rational(NTL::ZZ(0), NTL::ZZ(1));
-  Rational mul;
+pie::Rational DotProduct(std::vector<pie::Rational> vector1,
+                    std::vector<pie::Rational> vector2) {
+  pie::Rational result = pie::Rational(NTL::ZZ(0), NTL::ZZ(1));
+  pie::Rational mul;
 
   for (long i = 0; i < vector1.size(); i++) {
     mul = vector1[i] * vector2[i];
@@ -77,10 +77,10 @@ NTL::ZZ DotProduct(NTL::Vec<NTL::ZZ> vector1, NTL::Vec<NTL::ZZ> vector2) {
   return result;
 }
 
-Rational Product(std::vector<Rational> rationals) {
+pie::Rational Product(std::vector<pie::Rational> rationals) {
   long num = 1;
   long den = 1;
-  Rational product = Rational(num, den);
+  pie::Rational product = pie::Rational(num, den);
 
   for (long i = 0; i < rationals.size(); i++) {
     product = product * rationals[i];

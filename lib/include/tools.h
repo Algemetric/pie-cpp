@@ -5,16 +5,16 @@
 
 NTL::ZZ GenerateNonZeroRandomInteger(const NTL::ZZ &upperbound);
 
-Rational GenerateRandomRational(const NTL::ZZ &upperbound);
+pie::Rational GenerateRandomRational(const NTL::ZZ &upperbound);
 
-std::vector<Rational> GenerateRandomVector(int size, const NTL::ZZ &upperbound);
+std::vector<pie::Rational> GenerateRandomVector(int size, const NTL::ZZ &upperbound);
 
 NTL::Vec<NTL::ZZ> CreateVectorFromUniqueValue(long size, const NTL::ZZ &value);
 
-Rational DotProduct(std::vector<Rational> vector1,
-                    std::vector<Rational> vector2);
+pie::Rational DotProduct(std::vector<pie::Rational> vector1,
+                    std::vector<pie::Rational> vector2);
 
-Rational Product(std::vector<Rational> rationals);
+pie::Rational Product(std::vector<pie::Rational> rationals);
 
 NTL::ZZ Product(NTL::Vec<NTL::ZZ> integers, const NTL::ZZ &modulus);
 
