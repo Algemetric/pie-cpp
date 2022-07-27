@@ -145,36 +145,31 @@ such that `r1 = 4327/840`, `r2 = -3319/840`, `r3 = 2907/9800`, and `r4 = 392/323
 
 ## Hensel Codes
 
-We define a prime number
+We define a prime number so we can instantiate a Hensel code object. We will use exponents equal to `1` in this demo:
 
 ```cpp
 NTL::ZZ prime = StringToZZ("16966601356614805487");
-```
-
-so we can instantiate a Hensel code object. We will use exponents equal to `1` in this demo:
-
-```cpp
-HenselCode hensel_code = HenselCode(prime, 1);
+long r = 1;
 ```
 
 Given the rational nubmers we previously created, we encode each one as follows:
 
 ```cpp
-NTL::ZZ h1 = hensel_code.Encode(a);
-NTL::ZZ h2 = hensel_code.Encode(b);
-NTL::ZZ h3 = hensel_code.Encode(c);
-NTL::ZZ h4 = hensel_code.Encode(d);
-NTL::ZZ h5 = hensel_code.Encode(e);
+HenselCode h1 = Encode(prime, r, a);
+HenselCode h2 = Encode(prime, r, b);
+HenselCode h3 = Encode(prime, r, c);
+HenselCode h4 = Encode(prime, r, d);
+HenselCode h5 = Encode(prime, r, e);
 ```
 
 When we print the encodings we computed
 
 ```cpp
-std::cout << "h1: " << h1 << "\n";
-std::cout << "h2: " << h2 << "\n";
-std::cout << "h3: " << h3 << "\n";
-std::cout << "h4: " << h4 << "\n";
-std::cout << "h5: " << h5 << "\n\n";
+std::cout << "h1: " << h1.code << "\n";
+std::cout << "h2: " << h2.code << "\n";
+std::cout << "h3: " << h3.code << "\n";
+std::cout << "h4: " << h4.code << "\n";
+std::cout << "h5: " << h5.code << "\n\n";
 ```
 
 we obtain:
@@ -190,11 +185,11 @@ h5: 2120825169576850687
 We decode the above as follows:
 
 ```cpp
-Rational h1_d = hensel_code.Decode(h1);
-Rational h2_d = hensel_code.Decode(h2);
-Rational h3_d = hensel_code.Decode(h3);
-Rational h4_d = hensel_code.Decode(h4);
-Rational h5_d = hensel_code.Decode(h5);
+Rational h1_d = Decode(prime, r, h1);
+Rational h2_d = Decode(prime, r, h2);
+Rational h3_d = Decode(prime, r, h3);
+Rational h4_d = Decode(prime, r, h4);
+Rational h5_d = Decode(prime, r, h5);
 ```
 
 When we print the decodings we computed
@@ -220,32 +215,32 @@ h5_d: 9/8
 Now, considering `h1` and `h2` as operands, we compute the basic arithmetic operations over Hensel codes and obtain the corresponding results as follows:
 
 ```cpp
-NTL::ZZ h6 = hensel_code.Add(h1, h2);
-Rational h6_d = hensel_code.Decode(h6);
+HenselCode h6 = h1 + h2;
+Rational h6_d = Decode(prime, r, h6);
 
-NTL::ZZ h7 = hensel_code.Sub(h1, h2);
-Rational h7_d = hensel_code.Decode(h7);
+HenselCode h7 = h1 - h2;
+Rational h7_d = Decode(prime, r, h7);
 
-NTL::ZZ h8 = hensel_code.Mul(h1, h2);
-Rational h8_d = hensel_code.Decode(h8);
+HenselCode h8 = h1 * h2;
+Rational h8_d = Decode(prime, r, h8);
 
-NTL::ZZ h9 = hensel_code.Div(h1, h2);
-Rational h9_d = hensel_code.Decode(h9);
+HenselCode h9 = h1 / h2;
+Rational h9_d = Decode(prime, r, h9);
 ```
 
 Printing the results
 
 ```cpp
-std::cout << "h6: " << h6 << "\n";
+std::cout << "h6: " << h6.code << "\n";
 std::cout << "h6_d: " << h6_d.ToString() << "\n\n";
 
-std::cout << "h7: " << h7 << "\n";
+std::cout << "h7: " << h7.code << "\n";
 std::cout << "h7_d: " << h7_d.ToString() << "\n\n";
 
-std::cout << "h8: " << h8 << "\n";
+std::cout << "h8: " << h8.code << "\n";
 std::cout << "h8_d: " << h8_d.ToString() << "\n\n";
 
-std::cout << "h9: " << h9 << "\n";
+std::cout << "h9: " << h9.code << "\n";
 std::cout << "h9_d: " << h9_d.ToString() << "\n\n";
 ```
 
