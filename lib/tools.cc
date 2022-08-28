@@ -118,12 +118,6 @@ namespace pie
     return product;
   }
 
-  // def self.crt(mods, remainders)
-  //   max = mods.inject( :* )  # product of all moduli
-  //   series = remainders.zip(mods).map{ |r,m| (r * max * mod_inverse(max/m, m) / m) }
-  //   series.inject( :+ ) % max
-  // end
-
   NTL::ZZ CRT(NTL::Vec<NTL::ZZ> m, NTL::Vec<NTL::ZZ> r) {
     NTL::ZZ g = Product(m);
     NTL::ZZ g_prime;
@@ -132,8 +126,6 @@ namespace pie
 
     for (long i = 0; i < m.length(); i++) {
       g_prime = g / m[i];
-      // std::cout << "g_prime: " << g_prime << "\n";
-      // std::cout << "m[i]: " << m[i] << "\n";
       g_prime_inverse = pie::ModInverse(g_prime, m[i]);
       result = result + (g_prime * g_prime_inverse * r[i]);
     }

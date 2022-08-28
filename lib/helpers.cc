@@ -14,7 +14,7 @@ void Header(const std::string &string) {
 }
 
 void Section(const std::string &string) {
-  std::cout << string << ": \n\n";
+  std::cout << "\n" << string << ": \n\n";
 }
 
 void PrintDuration(double milliseconds) {
