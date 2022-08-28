@@ -21,7 +21,7 @@ TEST(HenselCodeTest, Encode) {
   NTL::ZZ prime = NTL::ZZ(257);
   int r = 3;
   pie::Rational rational = pie::Rational(4, 9);
-  pie::HenselCode h = Encode(prime, r, rational);
+  pie::HenselCode h = pie::Encode(prime, r, rational);
 
   EXPECT_EQ(7544264, h.code);
 }
@@ -30,8 +30,8 @@ TEST(HenselCodeTest, Decode) {
   NTL::ZZ prime = NTL::ZZ(257);
   int r = 3;
   pie::Rational rational = pie::Rational(4, 9);
-  pie::HenselCode h = Encode(prime, r, rational);
-  pie::Rational rational_decoded = Decode(prime, r, h);
+  pie::HenselCode h = pie::Encode(prime, r, rational);
+  pie::Rational rational_decoded = pie::Decode(prime, r, h);
 
   EXPECT_EQ("4/9", rational_decoded.ToString());
 }

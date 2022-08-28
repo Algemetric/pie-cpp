@@ -1,7 +1,7 @@
 #include "lib/include/hensel_code.h"
 #include "lib/include/rational.h"
 #include "lib/include/tools.h"
-#include "pie/helpers.h"
+#include "lib/include/helpers.h"
 #include <NTL/ZZ.h>
 #include <iostream>
 #include <string>
@@ -68,7 +68,7 @@ int main() {
 
   Header("Hensel Codes");
 
-  NTL::ZZ prime = StringToZZ("16966601356614805487");
+  NTL::ZZ prime = pie::StringToZZ("16966601356614805487");
   long r = 1;
 
   Section("Encode");

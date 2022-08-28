@@ -41,7 +41,6 @@ namespace pie
         MulMod(m_prime.numerator, den_inv, power(prime_, r_exponent));
     
     HenselCode h = HenselCode(prime_, r_exponent, hencoded);
-
     return h;
   }
 

@@ -12,7 +12,7 @@
 
 TEST(ToolsTest, RandomInteger) {
   long bound = 30;
-  NTL::ZZ number = GenerateNonZeroRandomInteger(NTL::ZZ(bound));
+  NTL::ZZ number = pie::GenerateNonZeroRandomInteger(NTL::ZZ(bound));
 
   EXPECT_TRUE((0 <= number) && (number < bound));
 }
@@ -21,8 +21,8 @@ TEST(ToolsTest, RandomVector) {
   long bound = 50;
   long size1 = 3;
   long size2 = 2;
-  std::vector<pie::Rational> v1 = GenerateRandomVector(size1, NTL::ZZ(bound));
-  std::vector<pie::Rational> v2 = GenerateRandomVector(size2, NTL::ZZ(bound));
+  std::vector<pie::Rational> v1 = pie::GenerateRandomVector(size1, NTL::ZZ(bound));
+  std::vector<pie::Rational> v2 = pie::GenerateRandomVector(size2, NTL::ZZ(bound));
 
   EXPECT_EQ(size1, v1.size());
   EXPECT_TRUE((0 <= v1[0].numerator) && (v1[0].numerator < bound));
@@ -41,7 +41,7 @@ TEST(ToolsTest, RandomVector) {
 TEST(ToolsTest, VectorFromUniqueValue) {
   long size = 5;
   NTL::ZZ value = NTL::ZZ(36);
-  NTL::Vec<NTL::ZZ> v = CreateVectorFromUniqueValue(size, value);
+  NTL::Vec<NTL::ZZ> v = pie::CreateVectorFromUniqueValue(size, value);
 
   EXPECT_EQ(size, v.length());
   EXPECT_EQ(value, v[0]);
@@ -71,8 +71,8 @@ TEST(ToolsTest, DotProduct) {
   NTL::ZZ expected_dot_product2 = NTL::ZZ(56);
 
   EXPECT_TRUE(expected_dot_product1.ToString() ==
-              DotProduct(v1, v2).ToString());
-  EXPECT_TRUE(expected_dot_product2 == DotProduct(v3, v4));
+              pie::DotProduct(v1, v2).ToString());
+  EXPECT_TRUE(expected_dot_product2 == pie::DotProduct(v3, v4));
 }
 
 TEST(ToolsTest, RationalProduct) {
@@ -83,7 +83,7 @@ TEST(ToolsTest, RationalProduct) {
 
   pie::Rational expected_product = pie::Rational(16, 35);
 
-  EXPECT_TRUE(expected_product.ToString() == Product(rationals).ToString());
+  EXPECT_TRUE(expected_product.ToString() == pie::Product(rationals).ToString());
 }
 
 TEST(ToolsTest, IntegerProduct) {
@@ -97,5 +97,35 @@ TEST(ToolsTest, IntegerProduct) {
 
   NTL::ZZ expected_product = NTL::ZZ(22);
 
-  EXPECT_EQ(expected_product, Product(integers, modulus));
+  EXPECT_EQ(expected_product, pie::Product(integers, modulus));
+}
+
+TEST(ToolsTest, ProductOfVectorElements) {
+  NTL::Vec<NTL::ZZ> v;
+  v.SetLength(3);
+  v[0] = 53;
+  v[1] = 71;
+  v[2] = 97;
+
+  NTL::ZZ expected_product = NTL::ZZ(365011);
+
+  EXPECT_EQ(expected_product, pie::Product(v));
+}
+
+TEST(ToolsTest, CRTOfVectorElements) {
+  NTL::Vec<NTL::ZZ> m;
+  m.SetLength(3);
+  m[0] = 53;
+  m[1] = 71;
+  m[2] = 97;
+
+  NTL::Vec<NTL::ZZ> r;
+  r.SetLength(3);
+  r[0] = 32;
+  r[1] = 45;
+  r[2] = 76;
+
+  NTL::ZZ expected_crt = NTL::ZZ(200478);
+
+  EXPECT_EQ(expected_crt, pie::CRT(m, r));
 }
