@@ -53,8 +53,28 @@ TEST(IDGHVTest, IDGHVEncrypt) {
   pie::HenselCode c = pie::IDGHVEncrypt(params, idghv.pk, m);
   pie::Rational m_r = pie::IDGHVDecrypt(params, idghv.pk, idghv.sk, c);
 
-  // std::cout << "m: " << m.ToString() << "\n";
-  // std::cout << "m_r: " << m_r.ToString() << "\n";
-
   EXPECT_EQ(m.ToString(), m_r.ToString());
+}
+
+TEST(IDGHVTest, IDGHVHomomorphism) {
+
+  pie::IDGHVPublicKey pk;
+  pie::IDGHVPrivateKey sk;
+  pie::IDGHVParams params = pie::IDGHVParams(52, 37, 41, 1558, 900000, 661);
+  pie::IDGHV idghv = pie::IDGHV(pk, sk);
+  idghv.KeyGen(params);
+
+  pie::Rational m1 = pie::Rational(2, 3);
+  pie::Rational m2 = pie::Rational(5, 11);
+  pie::HenselCode c1 = pie::IDGHVEncrypt(params, idghv.pk, m1);
+  pie::HenselCode c2 = pie::IDGHVEncrypt(params, idghv.pk, m2);
+
+  pie::HenselCode c1_plus_c2 = c1 + c2;
+  pie::HenselCode c1_times_c2 = c1 * c2;
+
+  pie::Rational m1_plus_m2_r = pie::IDGHVDecrypt(params, idghv.pk, idghv.sk, c1_plus_c2);
+  pie::Rational m1_times_m2_r = pie::IDGHVDecrypt(params, idghv.pk, idghv.sk, c1_times_c2);
+
+  EXPECT_EQ((m1 + m2).ToString(), m1_plus_m2_r.ToString());
+  EXPECT_EQ((m1 * m2).ToString(), m1_times_m2_r.ToString());
 }
