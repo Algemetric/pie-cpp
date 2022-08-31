@@ -3,12 +3,17 @@
 #include <NTL/ZZ.h>
 #include <NTL/ZZ_p.h>
 #include <NTL/vector.h>
+#include <NTL/ZZX.h>
+#include <NTL/ZZXFactoring.h>
+#include <NTL/vec_ZZ.h>
+#include <NTL/ZZ_pX.h>
 #include <math.h>
 #include <sstream>
 #include <stdlib.h>
 #include <time.h>
 #include <vector>
 #include <string>
+#include <random>
 
 namespace pie
 {
@@ -150,5 +155,107 @@ namespace pie
     NTL::XGCD(d, s, t, a, m);
     
     return s % m;
+  }
+
+  NTL::ZZ RandomNumberFromRange(const NTL::ZZ &from, const NTL::ZZ &to) {
+    NTL::ZZ rnd;
+
+    while (true) {
+      rnd = NTL::RandomBnd(to);
+      long bit = rand() % 2;
+      NTL::ZZ sign = bit == 0 ? NTL::ZZ(1) : NTL::ZZ(-1);
+      rnd = rnd * sign;
+
+      if ((rnd >= from) && (rnd <= to)) {
+        break;
+      }
+    }
+
+    return rnd;
+  }
+
+  NTL::ZZX ModP(const NTL::ZZX &a, const NTL::ZZ &p) {
+    NTL::ZZX b;
+    b.SetLength(a.rep.length());
+
+    for (long i = 0; i < b.rep.length(); i++) {
+      b[i] = SymMod(a[i], p);
+    }
+
+    return b;
+  }
+
+  NTL::ZZX MulMod(const NTL::ZZX &a, const NTL::ZZX &b, const NTL::ZZX &f) {
+    return NTL::reverse(NTL::MulMod(NTL::reverse(a), NTL::reverse(b), f));
+  }
+
+  NTL::ZZX MulModP(const NTL::ZZX &a, const NTL::ZZX &b, const NTL::ZZX &f, const NTL::ZZ &p) {
+    return pie::ModP(NTL::MulMod(a, b, f), p);
+  }
+
+  NTL::ZZX AddModP(const NTL::ZZX &a, const NTL::ZZX &b, const NTL::ZZX &f, const NTL::ZZ &p) {
+    return pie::ModP(a + b, p);
+  }
+
+  NTL::ZZX RandomPolynomial(const long &from, const long &to, const long &n) {
+    NTL::ZZX a;
+    a.SetLength(n);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distr(from, to);
+
+    for (long i = 0; i < n; i++) {
+      a[i] = NTL::ZZ(distr(gen));
+    }
+
+    return a;
+  }
+
+  NTL::ZZX RandomPolynomial(const NTL::ZZ &from, const NTL::ZZ &to, const long &n) {
+    NTL::ZZX a;
+    a.SetLength(n);
+
+    for (long i = 0; i < n; i++) {
+      a[i] = pie::RandomNumberFromRange(from, to);
+    }
+
+    return a;
+  }
+
+  NTL::ZZX NormalPolynomial(const long &n, const long &mean, const float &stddev) {
+    NTL::ZZX a;
+    a.SetLength(n);
+
+    // std::default_random_engine generator;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<double> distribution(mean, stddev);
+
+    for (long i = 0; i < n; i++) {
+      a[i] = NTL::ZZ((int)distribution(gen));
+    }
+
+    return a;
+  }
+
+  NTL::ZZX ComputeModulusPolynomial(const long &n) {
+    NTL::ZZX f;
+
+    f.SetLength(n + 1);
+    f[0] = NTL::ZZ(1);
+    f[n] = NTL::ZZ(1);
+
+    return f;
+  }
+
+  NTL::ZZ SymMod(const NTL::ZZ &a, const NTL::ZZ &m) {
+    NTL::ZZ r = a % m;
+
+    if (r <= (m - 1)/2) {
+      return r;
+    } else {
+      return r - m;
+    }
   }
 }

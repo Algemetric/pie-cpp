@@ -1,7 +1,11 @@
 #include "lib/include/hensel_code.h"
 #include "lib/include/rational.h"
+#include "lib/include/tools.h"
 #include <NTL/ZZ.h>
 #include <NTL/vector.h>
+#include <NTL/ZZXFactoring.h>
+#include <NTL/vec_ZZ.h>
+#include <NTL/ZZ_pX.h>
 #include <math.h>
 #include <vector>
 
@@ -81,5 +85,36 @@ namespace pie
     pie::Rational m = pie::Rational(c, d);
 
     return m;
+  }
+
+  NTL::ZZX PolyEncode(const long &b, const long &n, pie::Rational m) {
+    NTL::ZZ g = NTL::ZZ(NTL::power_ZZ(b, n) + 1);
+    pie::HenselCode hc = Encode(g, 1, m);
+
+    NTL::ZZ h = hc.code;
+
+    NTL::ZZX hx;
+    hx.SetLength(n);
+
+    for (long i = 0; i < n; i++) {
+      hx[i] = pie::SymMod(h / NTL::power_ZZ(b, i), NTL::ZZ(b));
+    }
+
+    return NTL::reverse(hx);
+  }
+
+  pie::Rational PolyDecode(const long &b, const long &n, NTL::ZZX hx) {
+    NTL::ZZ g = NTL::ZZ(NTL::power_ZZ(b, n) + 1);
+    NTL::ZZ h = NTL::ZZ(0);
+
+    hx = NTL::reverse(hx);
+
+    for (long i = 0; i < n; i++) {
+      h += (hx[i] % b) * NTL::power_ZZ(b, i);
+    }
+
+    pie::HenselCode hc = pie::HenselCode(g, 1, h);
+
+    return pie::Decode(g, 1, hc);
   }
 }

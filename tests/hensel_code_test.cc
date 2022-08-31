@@ -3,6 +3,9 @@
 #include "gtest/gtest.h"
 #include <NTL/ZZ.h>
 #include <NTL/vector.h>
+#include <NTL/ZZXFactoring.h>
+#include <NTL/vec_ZZ.h>
+#include <NTL/ZZ_pX.h>
 #include <vector>
 
 TEST(HenselCodeTest, HenselCodeConstructor) {
@@ -34,4 +37,19 @@ TEST(HenselCodeTest, Decode) {
   pie::Rational rational_decoded = pie::Decode(prime, r, h);
 
   EXPECT_EQ("4/9", rational_decoded.ToString());
+}
+
+TEST(HenselCodeTest, PolyEncode) {
+  long b = 257;
+  long n = 3;
+  pie::Rational rational = pie::Rational(2, 5);
+  NTL::ZZX hx = pie::PolyEncode(b, n, rational);
+
+  NTL::ZZX expected_hx;
+  expected_hx.SetLength(3);
+  expected_hx[0] = NTL::ZZ(102);
+  expected_hx[1] = NTL::ZZ(-52);
+  expected_hx[2] = NTL::ZZ(-102);
+
+  EXPECT_EQ(expected_hx, hx);
 }

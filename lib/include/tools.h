@@ -30,4 +30,24 @@ namespace pie {
   NTL::ZZ Delta(long i, long j);
 
   NTL::ZZ ModInverse(NTL::ZZ a, NTL::ZZ m);
+
+  NTL::ZZ RandomNumberFromRange(const NTL::ZZ &from, const NTL::ZZ &to);
+
+  NTL::ZZX MulMod(const NTL::ZZX &a, const NTL::ZZX &b, const NTL::ZZX &f);
+
+  NTL::ZZX ModP(const NTL::ZZX &a, const NTL::ZZ &p);
+
+  NTL::ZZX MulModP(const NTL::ZZX &a, const NTL::ZZX &b, const NTL::ZZX &f, const NTL::ZZ &p);
+
+  NTL::ZZX AddModP(const NTL::ZZX &a, const NTL::ZZX &b, const NTL::ZZX &f, const NTL::ZZ &p);
+
+  NTL::ZZX RandomPolynomial(const long &from, const long &to, const long &n);
+
+  NTL::ZZX RandomPolynomial(const NTL::ZZ &from, const NTL::ZZ &to, const long &n);
+
+  NTL::ZZX NormalPolynomial(const long &n, const long &mean, const float &stddev);
+
+  NTL::ZZX ComputeModulusPolynomial(const long &n);
+
+  NTL::ZZ SymMod(const NTL::ZZ &a, const NTL::ZZ &m);
 }

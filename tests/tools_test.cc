@@ -4,6 +4,7 @@
 #include "gtest/gtest.h"
 #include <NTL/ZZ.h>
 #include <NTL/ZZ_p.h>
+#include <NTL/ZZX.h>
 #include <NTL/vector.h>
 #include <math.h>
 #include <stdlib.h>
@@ -128,4 +129,39 @@ TEST(ToolsTest, CRTOfVectorElements) {
   NTL::ZZ expected_crt = NTL::ZZ(200478);
 
   EXPECT_EQ(expected_crt, pie::CRT(m, r));
+}
+
+TEST(ToolsTest, SymMod) {
+  NTL::ZZ a = NTL::ZZ(458);
+  NTL::ZZ b = NTL::ZZ(-22);
+  NTL::ZZ c = NTL::ZZ(-131);
+  NTL::ZZ d = NTL::ZZ(129);
+  NTL::ZZ e = NTL::ZZ(80);
+
+  NTL::ZZ p = NTL::ZZ(257);
+
+  EXPECT_EQ(NTL::ZZ(-56), pie::SymMod(a, p));
+  EXPECT_EQ(NTL::ZZ(-22), pie::SymMod(b, p));
+  EXPECT_EQ(NTL::ZZ(126), pie::SymMod(c, p));
+  EXPECT_EQ(NTL::ZZ(-128), pie::SymMod(d, p));
+  EXPECT_EQ(NTL::ZZ(80), pie::SymMod(e, p));
+}
+
+TEST(ToolsTest, PolySymMod) {
+  NTL::ZZX a;
+  a.SetLength(4);
+
+  NTL::ZZ p = NTL::ZZ(257);
+
+  a[0] = NTL::ZZ(399);
+  a[1] = NTL::ZZ(-131);
+  a[2] = NTL::ZZ(285);
+  a[3] = NTL::ZZ(67);
+
+  NTL::ZZX b = pie::ModP(a, p);
+
+  EXPECT_EQ(NTL::ZZ(-115), b[0]);
+  EXPECT_EQ(NTL::ZZ(126), b[1]);
+  EXPECT_EQ(NTL::ZZ(28), b[2]);
+  EXPECT_EQ(NTL::ZZ(67), b[3]);
 }

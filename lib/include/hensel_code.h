@@ -27,4 +27,8 @@ namespace pie
   HenselCode Encode(const NTL::ZZ &prime_, const long &r_exponent, pie::Rational &m_prime);
 
   pie::Rational Decode(const NTL::ZZ &prime_, const long &r_exponent, const HenselCode &hensel_code);
+
+  NTL::ZZX PolyEncode(const long &b, const long &n, pie::Rational m);
+
+  pie::Rational PolyDecode(const long &b, const long &n, NTL::ZZX hx);
 }

@@ -30,18 +30,12 @@ namespace pie
     long tau;
 
     IDGHVPublicKey();
-
-    // IDGHVPublicKey(const NTL::ZZ x0, const NTL::Vec<NTL::ZZ> big_qs, 
-    //             const NTL::Vec<NTL::ZZ> xs, NTL::Vec<NTL::ZZ> xs_,
-    //             const long tau);
   };
 
   struct IDGHVPrivateKey {
     NTL::Vec<NTL::ZZ> ps;
 
     IDGHVPrivateKey();
-
-    // IDGHVPrivateKey(const NTL::Vec<NTL::ZZ> ps);
   };
 
   class IDGHV {
@@ -49,19 +43,12 @@ namespace pie
     IDGHVParams params;
     IDGHVPublicKey pk;
     IDGHVPrivateKey sk;
-    // NTL::Vec<NTL::ZZ> ps;
     NTL::ZZ pi;
     NTL::ZZ q0;
-    // NTL::ZZ x0;
-    // NTL::Vec<NTL::ZZ> xs;
-    // NTL::Vec<NTL::ZZ> xs_;
-    // NTL::Vec<NTL::ZZ> big_qs;
 
     IDGHV();
 
     IDGHV(IDGHVPublicKey pk, IDGHVPrivateKey sk);
-
-    // IDGHV(IDGHVPublicKey pk, IDGHVPrivateKey sk);
 
     void KeyGen(IDGHVParams params);
 
@@ -69,12 +56,7 @@ namespace pie
 
     void GenerateRoughInteger(const long bit_length);
 
-    // void GenerateXs(NTL::Vec<NTL::ZZ> &xs, NTL::Vec<NTL::ZZ> &xs_, 
-    //                      NTL::Vec<NTL::ZZ> &big_qs, NTL::ZZ &q0, NTL::ZZ &pi,
-    //                      long &rho, NTL::ZZ &g);
     void GenerateXs();
-
-    // pie::Rational Decrypt();
   };
 
   HenselCode IDGHVEncrypt(IDGHVParams &params, IDGHVPublicKey &pk, pie::Rational &m);
