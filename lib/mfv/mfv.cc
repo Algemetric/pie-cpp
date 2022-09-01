@@ -243,25 +243,26 @@ namespace pie
     return deltab;
   }
 
-  NTL::ZZX AuxPolynomial(MFVParams &params) {
+  NTL::ZZX AuxPolynomial(MFVParams &params, const NTL::ZZX &a, NTL::ZZX &f) {
     NTL::ZZX ax;
     ax.SetLength(2);
     ax[0] = NTL::ZZ(1);
     ax[1] = NTL::ZZ(-params.b);
 
+    NTL::ZZX b = pie::MulMod(ax, a, f); 
+    NTL::ZZX c;
+    c.SetLength(params.n);
+
     NTL::RR qr;
     NTL::conv(qr, params.q);
-
-    NTL::ZZX rx;
-    rx.SetLength(2);
     
     for (long i = 0; i < params.n; i++) {
-      NTL::RR axi;
-      conv(axi, ax[i]);
-      NTL::conv(rx[i], NTL::round(axi / qr));
+      NTL::RR bi;
+      conv(bi, b[i]);
+      NTL::conv(c[i], NTL::round(bi / qr));
     }
 
-    return rx;
+    return c;
   }
 
   NTL::Vec<NTL::ZZX> MFVAdd(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
@@ -279,24 +280,18 @@ namespace pie
   NTL::Vec<NTL::ZZX> MFVMulPrime(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
                          const NTL::Vec<NTL::ZZX> &c2) {
     
+    NTL::ZZX f = ComputeModulusPolynomial(params.n);
     NTL::Vec<NTL::ZZX> cs;
     cs.SetLength(3);
 
-    NTL::ZZX f = ComputeModulusPolynomial(params.n);
-    NTL::ZZX caux = AuxPolynomial(params);
+    NTL::ZZX c_11 = pie::MulMod(c1[0], c2[0], f);
+    NTL::ZZX c_12 = pie::AuxPolynomial(params, c_11, f);
 
-    NTL::ZZX c10 = pie::MulMod(c1[0], c2[0], f);
-    NTL::ZZX c11 = pie::ModP(pie::MulMod(caux, c10, f), params.q);
+    NTL::ZZX c_21 = pie::MulMod(c1[0], c2[1], f) + pie::MulMod(c1[1], c2[0], f);
+    NTL::ZZX c_22 = pie::AuxPolynomial(params, c_21, f);
 
-    NTL::ZZX c20 = pie::MulMod(c1[0], c2[1], f) + pie::MulMod(c1[1], c2[0], f);
-    NTL::ZZX c21 = pie::ModP(pie::MulMod(caux, c20, f), params.q);
-
-    NTL::ZZX c30 = pie::MulMod(c1[1], c2[1], f);
-    NTL::ZZX c31 = pie::ModP(pie::MulMod(caux, c30, f), params.q);
-
-    cs[0] = c11;
-    cs[1] = c21;
-    cs[2] = c31;
+    NTL::ZZX c_31 = pie::MulMod(c1[1], c2[1], f);
+    NTL::ZZX c_32 = pie::AuxPolynomial(params, c_31, f);
 
     return cs;
   }

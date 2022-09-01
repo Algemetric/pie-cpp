@@ -70,7 +70,7 @@ namespace pie
 
   NTL::ZZX ComputeDeltaB(MFVParams &params);
 
-  NTL::ZZX AuxPolynomial(MFVParams &params);
+  NTL::ZZX AuxPolynomial(MFVParams &params, const NTL::ZZX &a, NTL::ZZX &f);
 
   NTL::Vec<NTL::ZZX> MFVEncrypt(MFVParams &params, MFVPublicKey &pk, pie::Rational &m);
 
@@ -79,12 +79,12 @@ namespace pie
 
   NTL::Vec<NTL::ZZX> MFVAdd(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
                          const NTL::Vec<NTL::ZZX> &c2);
+  
+  NTL::Vec<NTL::ZZX> MFVMulPrime(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
+                         const NTL::Vec<NTL::ZZX> &c2);
 
   // NTL::Vec<NTL::ZZX> MFVMul(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
   //                        const NTL::Vec<NTL::ZZX> &c2);
-
-  NTL::Vec<NTL::ZZX> MFVMulPrime(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
-                         const NTL::Vec<NTL::ZZX> &c2);  
 
   // NTL::Vec<NTL::ZZX> MFVRelinearize(MFVParams &params, MFVEvaluationKey &evk, 
   //                        const NTL::Vec<NTL::ZZX> &cprime);                           
