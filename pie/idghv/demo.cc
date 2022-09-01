@@ -52,6 +52,17 @@ int main() {
   std::cout << "m1: " << m1.ToString() << "\n";
   std::cout << "m2: " << m2.ToString() << "\n";
 
+  Section("Encoding");
+
+  start = std::chrono::high_resolution_clock::now();
+  pie::HenselCode h1 = pie::Encode(idghv.pk.g, 1, m1);
+  stop = std::chrono::high_resolution_clock::now();
+  duration = stop - start;
+  milliseconds = duration.count();
+  PrintDuration(milliseconds);
+
+  pie::HenselCode h2 = pie::Encode(idghv.pk.g, 1, m2);
+
   Section("Ciphertexts");
 
   std::cout << "c1: " << c1.code << "\n";

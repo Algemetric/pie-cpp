@@ -50,4 +50,8 @@ namespace pie {
   NTL::ZZX ComputeModulusPolynomial(const long &n);
 
   NTL::ZZ SymMod(const NTL::ZZ &a, const NTL::ZZ &m);
+
+  NTL::Vec<NTL::ZZX> Reverse(const NTL::Vec<NTL::ZZX> &v);
+
+  NTL::Vec<NTL::ZZ> Reverse(const NTL::Vec<NTL::ZZ> &v);
 }

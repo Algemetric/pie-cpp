@@ -38,27 +38,39 @@ namespace pie
     MFVPrivateKey();
   };
 
+  struct MFVEvaluationKey {
+    NTL::Vec<NTL::ZZX> evk1;
+    NTL::Vec<NTL::ZZX> evk2;
+
+    MFVEvaluationKey();
+  };
+
   class MFV {
   public:
     MFVParams params;
     MFVPublicKey pk;
     MFVPrivateKey sk;
+    MFVEvaluationKey evk;
     NTL::ZZ e0;
     NTL::ZZ e1;
     NTL::ZZX f;
 
     MFV();
 
-    MFV(MFVPublicKey pk, MFVPrivateKey sk);
+    MFV(MFVPublicKey pk, MFVPrivateKey sk, MFVEvaluationKey evk);
 
     void KeyGen(MFVParams params);
 
     void GenerateS();
 
     void GeneratePK();
+
+    void GenerateEVK();
   };
 
   NTL::ZZX ComputeDeltaB(MFVParams &params);
+
+  NTL::ZZX AuxPolynomial(MFVParams &params);
 
   NTL::Vec<NTL::ZZX> MFVEncrypt(MFVParams &params, MFVPublicKey &pk, pie::Rational &m);
 
@@ -68,6 +80,12 @@ namespace pie
   NTL::Vec<NTL::ZZX> MFVAdd(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
                          const NTL::Vec<NTL::ZZX> &c2);
 
-  NTL::Vec<NTL::ZZX> MFVMul(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
-                         const NTL::Vec<NTL::ZZX> &c2);
+  // NTL::Vec<NTL::ZZX> MFVMul(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
+  //                        const NTL::Vec<NTL::ZZX> &c2);
+
+  NTL::Vec<NTL::ZZX> MFVMulPrime(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
+                         const NTL::Vec<NTL::ZZX> &c2);  
+
+  // NTL::Vec<NTL::ZZX> MFVRelinearize(MFVParams &params, MFVEvaluationKey &evk, 
+  //                        const NTL::Vec<NTL::ZZX> &cprime);                           
 }

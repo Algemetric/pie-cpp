@@ -31,11 +31,14 @@ namespace pie
 
   MFVPrivateKey::MFVPrivateKey() {};
 
+  MFVEvaluationKey::MFVEvaluationKey() {};
+
   MFV::MFV() {};
 
-  MFV::MFV(MFVPublicKey pk, MFVPrivateKey sk) {
+  MFV::MFV(MFVPublicKey pk, MFVPrivateKey sk, MFVEvaluationKey evk) {
     this->pk = pk;
     this->sk = sk;
+    this->evk = evk;
   }
 
   void MFV::KeyGen(MFVParams params) {
@@ -46,6 +49,7 @@ namespace pie
 
     MFV::GenerateS();
     MFV::GeneratePK();
+    MFV::GenerateEVK();
   }
 
   void MFV::GenerateS() {
@@ -76,6 +80,40 @@ namespace pie
     // std::cout << "-as_e: " << -as_e << "\n\n";
 
     this->pk.p0 = pie::ModP(-as_e, this->params.q);
+  }
+
+  void MFV::GenerateEVK() {
+    this->evk.evk1.SetLength(this->params.l + 1);
+    this->evk.evk2.SetLength(this->params.l + 1);
+
+    NTL::ZZX a;
+    NTL::ZZX e;
+    NTL::ZZX s2;
+    NTL::ZZX wx;
+    NTL::ZZX wis2;
+    wx.SetLength(1);
+
+    NTL::ZZX as_e;
+
+    NTL::ZZ from = -NTL::ZZ((this->params.q - 1)/2);
+    NTL::ZZ to = NTL::ZZ((this->params.q - 1)/2);
+    
+    for (long i = 0; i < this->params.l + 1; i++) {
+      a = pie::RandomPolynomial(from, to, this->params.n);
+      e = pie::NormalPolynomial(this->params.n, 0, this->params.sigma);
+
+      s2 = pie::MulMod(this->sk.s, this->sk.s, this->f);
+      
+      wx[0] = NTL::ZZ(NTL::power_ZZ(params.w, i));
+
+      wis2 = pie::MulMod(wx, s2, this->f);
+
+      this->evk.evk1[i] = pie::ModP(-pie::MulMod(a, this->sk.s, this->f) + e + wis2, this->params.q);
+      this->evk.evk2[i] = a;
+    }
+
+    this->evk.evk1 = pie::Reverse(this->evk.evk1);
+    this->evk.evk2 = pie::Reverse(this->evk.evk2);
   }
 
   NTL::Vec<NTL::ZZX> MFVEncrypt(MFVParams &params, MFVPublicKey &pk, pie::Rational &m) {
@@ -205,6 +243,27 @@ namespace pie
     return deltab;
   }
 
+  NTL::ZZX AuxPolynomial(MFVParams &params) {
+    NTL::ZZX ax;
+    ax.SetLength(2);
+    ax[0] = NTL::ZZ(1);
+    ax[1] = NTL::ZZ(-params.b);
+
+    NTL::RR qr;
+    NTL::conv(qr, params.q);
+
+    NTL::ZZX rx;
+    rx.SetLength(2);
+    
+    for (long i = 0; i < params.n; i++) {
+      NTL::RR axi;
+      conv(axi, ax[i]);
+      NTL::conv(rx[i], NTL::round(axi / qr));
+    }
+
+    return rx;
+  }
+
   NTL::Vec<NTL::ZZX> MFVAdd(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
                          const NTL::Vec<NTL::ZZX> &c2) {
     NTL::Vec<NTL::ZZX> c;
@@ -217,32 +276,77 @@ namespace pie
     return c;
   }
 
-  NTL::Vec<NTL::ZZX> MFVMul(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
+  NTL::Vec<NTL::ZZX> MFVMulPrime(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
                          const NTL::Vec<NTL::ZZX> &c2) {
-    NTL::Vec<NTL::ZZX> c;
-    c.SetLength(2);
+    
+    NTL::Vec<NTL::ZZX> cs;
+    cs.SetLength(3);
+
     NTL::ZZX f = ComputeModulusPolynomial(params.n);
+    NTL::ZZX caux = AuxPolynomial(params);
 
-    c[0] = pie::MulModP(c1[0], c2[0], f, params.q);
-    c[1] = pie::MulModP(c1[1], c2[1], f, params.q);
+    NTL::ZZX c10 = pie::MulMod(c1[0], c2[0], f);
+    NTL::ZZX c11 = pie::ModP(pie::MulMod(caux, c10, f), params.q);
 
-    return c;
+    NTL::ZZX c20 = pie::MulMod(c1[0], c2[1], f) + pie::MulMod(c1[1], c2[0], f);
+    NTL::ZZX c21 = pie::ModP(pie::MulMod(caux, c20, f), params.q);
+
+    NTL::ZZX c30 = pie::MulMod(c1[1], c2[1], f);
+    NTL::ZZX c31 = pie::ModP(pie::MulMod(caux, c30, f), params.q);
+
+    cs[0] = c11;
+    cs[1] = c21;
+    cs[2] = c31;
+
+    return cs;
   }
 
-  // Rational MFVDecrypt(MFVParams &params, const MFVPublicKey &pk, 
-  //                       const MFVPrivateKey &sk, const HenselCode &c) {
-  //   NTL::Vec<NTL::ZZ> hs;
-  //   hs.SetLength(params.l);
+  // NTL::Vec<NTL::ZZX> MFVRelinearize(MFVParams &params, MFVEvaluationKey &evk, 
+  //                        const NTL::Vec<NTL::ZZX> &cprime) {
+  //   NTL::ZZX c;                          
+  //   NTL::ZZX f = ComputeModulusPolynomial(params.n);                      
+  //   NTL::ZZX c2prime = cprime[2];
+  //   NTL::ZZ m;
+  //   NTL::Vec<NTL::ZZ> y;
+  //   NTL::Vec<NTL::ZZ> c2primes;
+  //   c2primes.SetLength(params.l + 1);
+  //   NTL::ZZ wz = NTL::ZZ(params.w);
 
-  //   for (long i = 0; i < params.l; i++) {
-  //     hs[i] = (c.code % sk.ps[i]) % pk.big_qs[i];
+  //   for (long i = 0; i < c2prime.rep.length(); i++) {
+  //     m = c2prime[i];
+  //     y[0] = pie::SymMod(m, wz);
+      
+  //     for (long j = 1; j <= params.l; j++) {
+  //       m = m - y[j] * NTL::power(wz, j - 1);
+  //       y[j] = pie::SymMod(m /NTL::power(wz, j), wz);
+  //     }
+  //     y = pie::Reverse(y);
+  //     c2primes[i] = y;
   //   }
 
-  //   NTL::ZZ h = pie::CRT(pk.big_qs, hs);
-  //   pie::HenselCode h_ = pie::HenselCode(pk.g, 1, h);
-  //   pie::Rational m = pie::Decode(pk.g, 1, h_);
+  //   c11 = cprime[0];
+  //   for (long i = 0; i <= params.l; i++) {
+  //     c11 = c11 + pie::MulMod(params.evk.evk1[i], c2primes[i], f);
+  //   }
+  //   c[0] = c11;
 
-  //   return m;
+  //   c22 = cprime[1];
+  //   for (long i = 0; i <= params.l; i++) {
+  //     c22 = c22 + pie::MulMod(params.evk.evk2[i], c2primes[i], f);
+  //   }
+  //   c[1] = c22;
+
+  //   return c;
+  // }
+
+  // NTL::Vec<NTL::ZZX> MFVMul(MFVParams &params, MFVEvaluationKey &evk,
+  //                           const NTL::Vec<NTL::ZZX> &c1, const NTL::Vec<NTL::ZZX> &c2) {
+
+  //   NTL::ZZX f = ComputeModulusPolynomial(params.n);
+  //   NTL::Vec<NTL::ZZX> cprime = MFVMulPrime(params, c1, c2);
+  //   NTL::Vec<NTL::ZZX> c = MFVRelinearize(params, evk, cprime);
+
+  //   return c;
   // }
 
 }

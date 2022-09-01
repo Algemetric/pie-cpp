@@ -258,4 +258,28 @@ namespace pie
       return r - m;
     }
   }
+
+  NTL::Vec<NTL::ZZX> Reverse(const NTL::Vec<NTL::ZZX> &v) {
+    NTL::Vec<NTL::ZZX> r;
+    long size = v.length();
+    r.SetLength(size);
+
+    for (long i = (size - 1); i >= 0; i--) {
+      r[i] = v[i];
+    }
+
+    return r;
+  }
+
+  NTL::Vec<NTL::ZZ> Reverse(const NTL::Vec<NTL::ZZ> &v) {
+    NTL::Vec<NTL::ZZ> r;
+    long size = v.length();
+    r.SetLength(size);
+
+    for (long i = (size - 1); i >= 0; i--) {
+      r[i] = v[i];
+    }
+
+    return r;
+  }
 }

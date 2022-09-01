@@ -260,3 +260,53 @@ h8_d: 6/35
 h9: 11876620949630363843
 h9_d: 21/10
 ```
+
+# PIE + IDGHV
+
+To build the **PIE** library coupled with our implementation of the IDGHV library, execute the following command:
+
+```bash
+bazel build //lib/idghv:idghv
+```
+
+which generates `bazel-bin/lib/idghv/libidghv.a`.
+
+To build a demo of **PIE** + IDGHV, execute:
+
+```bash
+bazel build //pie/idghv:demo
+```
+
+then run
+
+```bash
+./bazel-bin/pie/idghv/demo
+```
+
+# PIE + MFV
+
+To build the **PIE** library coupled with our implementation of the modified FV library, execute the following command:
+
+```bash
+bazel build //lib/mfv:mfv
+```
+
+which generates `bazel-bin/lib/mfv/libmfv.a`.
+
+To build a demo of **PIE** + MFV, execute:
+
+```bash
+bazel build //pie/mfv:demo
+```
+
+then run
+
+```bash
+./bazel-bin/pie/mfv/demo
+```
+
+# Disclaimers
+
+**PIE** is not yet in its complete form. It is under development and updates will be released frequently. New libraries and demos will be soon released. The current libraries and demos will be updated. 
+
+For questions, comments, and any other feedback, feel free to write to David Silva, dsilva@algemetric.com

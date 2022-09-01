@@ -80,8 +80,9 @@ int main() {
 
   pie::MFVPublicKey pk;
   pie::MFVPrivateKey sk;
+  pie::MFVEvaluationKey evk;
   pie::MFVParams params = pie::MFVParams(NTL::ZZ(1679617), 3.19, 30, 4, 4, 10);
-  pie::MFV mfv = pie::MFV(pk, sk);
+  pie::MFV mfv = pie::MFV(pk, sk, evk);
   mfv.KeyGen(params);
 
   std::cout << "mfv.params.q: " << mfv.params.q << "\n";
@@ -148,7 +149,7 @@ int main() {
   std::cout << "c2: " << c2 << "\n\n";
 
   NTL::Vec<NTL::ZZX> c1_plus_c2 = pie::MFVAdd(mfv.params, c1, c2);
-  NTL::Vec<NTL::ZZX> c1_times_c2 = pie::MFVMul(mfv.params, c1, c2);
+  // NTL::Vec<NTL::ZZX> c1_times_c2 = pie::MFVMul(mfv.params, c1, c2);
 
   Header("Decrypted ciphertexts");
 
@@ -156,80 +157,13 @@ int main() {
   pie::Rational m2_r = pie::MFVDecrypt(mfv.params, mfv.sk, c2);
 
   pie::Rational m1_plus_m2_r = pie::MFVDecrypt(mfv.params, mfv.sk, c1_plus_c2);
-  pie::Rational m1_times_m2_r = pie::MFVDecrypt(mfv.params, mfv.sk, c1_times_c2);
+  // pie::Rational m1_times_m2_r = pie::MFVDecrypt(mfv.params, mfv.sk, c1_times_c2);
 
   std::cout << "m1_r: " << m1_r.ToString() << "\n";
   std::cout << "m2_r: " << m2_r.ToString() << "\n\n";
 
   std::cout << "m1_plus_m2_r: " << m1_plus_m2_r.ToString() << "\n";
-  std::cout << "m1_times_m2_r: " << m1_times_m2_r.ToString() << "\n\n";
+  // std::cout << "m1_times_m2_r: " << m1_times_m2_r.ToString() << "\n\n";
   
-  // Header("Key Generation");
-
-  // Section("Parameters");
-
-  // pie::MFVPublicKey pk;
-  // pie::MFVPrivateKey sk;
-  
-  // pie::MFVParams params = pie::MFVParams(52, 37, 41, 1558, 900000, 661);
-  // // pie::MFVParams params = pie::MFVParams(50, 6, 60, 4248, 530000000, 661);
-
-  // std::cout << "params.lambda: " << params.lambda << "\n";
-  // std::cout << "params.l: " << params.l << "\n";
-  // std::cout << "params.rho: " << params.rho << "\n";
-  // std::cout << "params.eta: " << params.eta << "\n";
-  // std::cout << "params.gamma: " << params.gamma << "\n";
-  // std::cout << "params.tau: " << params.tau << "\n\n";
-
-  // pie::MFV mfv = pie::MFV(pk, sk);
-
-  // auto start = std::chrono::high_resolution_clock::now();
-  // mfv.KeyGen(params);
-  // auto stop = std::chrono::high_resolution_clock::now();
-  // std::chrono::duration<double, std::milli> duration = stop - start;
-  // double milliseconds = duration.count();
-  // Section("Key Generation Performance");
-  // PrintDuration(milliseconds);
-
-  // Header("Encryption");
-
-  // pie::Rational m1 = pie::Rational(2, 3);
-  // pie::Rational m2 = pie::Rational(4, 5);
-  // pie::HenselCode c1 = pie::MFVEncrypt(params, mfv.pk, m1);
-  // pie::HenselCode c2 = pie::MFVEncrypt(params, mfv.pk, m2);
-  // pie::Rational m1_r = pie::MFVDecrypt(params, mfv.pk, mfv.sk, c1);
-  // pie::Rational m2_r = pie::MFVDecrypt(params, mfv.pk, mfv.sk, c2);
-
-  // Section("Messages");
-
-  // std::cout << "m1: " << m1.ToString() << "\n";
-  // std::cout << "m2: " << m2.ToString() << "\n";
-
-  // Section("Ciphertexts");
-
-  // std::cout << "c1: " << c1.code << "\n";
-  // std::cout << "c2: " << c2.code << "\n";
-
-  // Section("Decrypted Messages");
-
-  // std::cout << "m1_r: " << m1_r.ToString() << "\n";
-  // std::cout << "m2_r: " << m2_r.ToString() << "\n";
-
-  // Section("Homomorphic Addition and Multiplication");
-
-  // pie::HenselCode c1_plus_c2 = c1 + c2;
-  // pie::HenselCode c1_times_c2 = c1 * c2;
-
-  // std::cout << "c1_plus_c2: " << c1_plus_c2.code << "\n";
-  // std::cout << "c1_times_c2: " << c1_times_c2.code << "\n";
-
-  // Section("Decrypted Homomorphic Results");
-
-  // pie::Rational m1_plus_m2_r = pie::MFVDecrypt(params, mfv.pk, mfv.sk, c1_plus_c2);
-  // pie::Rational m1_times_m2_r = pie::MFVDecrypt(params, mfv.pk, mfv.sk, c1_times_c2);
-
-  // std::cout << "m1_plus_m2_r: " << m1_plus_m2_r.ToString() << "\n";
-  // std::cout << "m1_times_m2_r: " << m1_times_m2_r.ToString() << "\n";
-
   return 0;
 }
