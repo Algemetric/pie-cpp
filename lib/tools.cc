@@ -265,7 +265,7 @@ namespace pie
     r.SetLength(size);
 
     for (long i = (size - 1); i >= 0; i--) {
-      r[i] = v[i];
+      r[i] = v[size - 1 - i];
     }
 
     return r;
@@ -277,9 +277,20 @@ namespace pie
     r.SetLength(size);
 
     for (long i = (size - 1); i >= 0; i--) {
-      r[i] = v[i];
+      r[i] = v[size - 1 - i];
     }
 
     return r;
+  }
+
+  NTL::ZZX CreateVecZZXFromList(const std::vector<int> &list) {
+    NTL::ZZX a;
+    a.SetLength(list.size());
+
+    for (long i = 0; i < list.size(); i++) {
+      a[i] = NTL::ZZ(list[i]);
+    }
+
+    return a;
   }
 }

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <vector>
+#include <list>
 
 TEST(ToolsTest, RandomInteger) {
   long bound = 30;
@@ -164,4 +165,90 @@ TEST(ToolsTest, PolySymMod) {
   EXPECT_EQ(NTL::ZZ(126), b[1]);
   EXPECT_EQ(NTL::ZZ(28), b[2]);
   EXPECT_EQ(NTL::ZZ(67), b[3]);
+}
+
+TEST(ToolsTest, ReverseVecPolynomial) {
+  NTL::Vec<NTL::ZZX> a;
+  a.SetLength(2);
+
+  NTL::ZZX a1;
+  NTL::ZZX a2;
+  a1.SetLength(4);
+  a2.SetLength(4);
+
+  a1[0] = NTL::ZZ(2);
+  a1[1] = NTL::ZZ(3);
+  a1[2] = NTL::ZZ(4);
+  a1[3] = NTL::ZZ(5);
+
+  a2[0] = NTL::ZZ(6);
+  a2[1] = NTL::ZZ(7);
+  a2[2] = NTL::ZZ(8);
+  a2[3] = NTL::ZZ(9);
+
+  a[0] = a1;
+  a[1] = a2;
+
+  EXPECT_EQ(2, a[0][0]);
+  EXPECT_EQ(3, a[0][1]);
+  EXPECT_EQ(4, a[0][2]);
+  EXPECT_EQ(5, a[0][3]);
+
+  a = pie::Reverse(a);
+
+  EXPECT_EQ(6, a[0][0]);
+  EXPECT_EQ(7, a[0][1]);
+  EXPECT_EQ(8, a[0][2]);
+  EXPECT_EQ(9, a[0][3]);
+
+  EXPECT_EQ(2, a[1][0]);
+  EXPECT_EQ(3, a[1][1]);
+  EXPECT_EQ(4, a[1][2]);
+  EXPECT_EQ(5, a[1][3]);
+
+}
+
+TEST(ToolsTest, ReverseVecZZ) {
+  NTL::Vec<NTL::ZZ> a;
+  a.SetLength(8);
+
+  a[0] = NTL::ZZ(2);
+  a[1] = NTL::ZZ(3);
+  a[2] = NTL::ZZ(4);
+  a[3] = NTL::ZZ(5);
+
+  a[4] = NTL::ZZ(6);
+  a[5] = NTL::ZZ(7);
+  a[6] = NTL::ZZ(8);
+  a[7] = NTL::ZZ(9);
+
+  EXPECT_EQ(2, a[0]);
+  EXPECT_EQ(3, a[1]);
+  EXPECT_EQ(4, a[2]);
+  EXPECT_EQ(5, a[3]);
+  EXPECT_EQ(6, a[4]);
+  EXPECT_EQ(7, a[5]);
+  EXPECT_EQ(8, a[6]);
+  EXPECT_EQ(9, a[7]);
+
+  a = pie::Reverse(a);
+
+  EXPECT_EQ(9, a[0]);
+  EXPECT_EQ(8, a[1]);
+  EXPECT_EQ(7, a[2]);
+  EXPECT_EQ(6, a[3]);
+  EXPECT_EQ(5, a[4]);
+  EXPECT_EQ(4, a[5]);
+  EXPECT_EQ(3, a[6]);
+  EXPECT_EQ(2, a[7]);
+
+}
+
+TEST(ToolsTest, CreateVecZZXFromList) {
+  NTL::ZZX a = pie::CreateVecZZXFromList({389048, 400519, 204647, 777223});
+
+  EXPECT_EQ(NTL::ZZ(389048), a[0]);
+  EXPECT_EQ(NTL::ZZ(400519), a[1]);
+  EXPECT_EQ(NTL::ZZ(204647), a[2]);
+  EXPECT_EQ(NTL::ZZ(777223), a[3]);
 }

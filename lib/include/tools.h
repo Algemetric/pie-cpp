@@ -54,4 +54,6 @@ namespace pie {
   NTL::Vec<NTL::ZZX> Reverse(const NTL::Vec<NTL::ZZX> &v);
 
   NTL::Vec<NTL::ZZ> Reverse(const NTL::Vec<NTL::ZZ> &v);
+
+  NTL::ZZX CreateVecZZXFromList(const std::vector<int> &list);
 }

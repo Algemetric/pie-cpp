@@ -83,9 +83,12 @@ namespace pie
   NTL::Vec<NTL::ZZX> MFVMulPrime(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
                          const NTL::Vec<NTL::ZZX> &c2);
 
-  // NTL::Vec<NTL::ZZX> MFVMul(MFVParams &params, const NTL::Vec<NTL::ZZX> &c1, 
-  //                        const NTL::Vec<NTL::ZZX> &c2);
+  NTL::Vec<NTL::ZZX> MFVMul(MFVParams &params, MFVEvaluationKey &evk,
+                            const NTL::Vec<NTL::ZZX> &c1, const NTL::Vec<NTL::ZZX> &c2);
 
-  // NTL::Vec<NTL::ZZX> MFVRelinearize(MFVParams &params, MFVEvaluationKey &evk, 
-  //                        const NTL::Vec<NTL::ZZX> &cprime);                           
+  NTL::Vec<NTL::ZZX> MFVRelinearize(MFVParams &params, MFVEvaluationKey &evk, 
+                         const NTL::Vec<NTL::ZZX> &cprime); 
+
+  NTL::Vec<NTL::ZZX> RotatedPolynomial(const NTL::Vec<NTL::ZZX> &cs, 
+                             const long &columns, const long &rows);                                                   
 }

@@ -1,39 +1,43 @@
+#include "lib/include/tools.h"
 #include "lib/mfv/include/mfv.h"
 #include "gtest/gtest.h"
 #include <NTL/ZZ.h>
 #include <NTL/vector.h>
 #include <vector>
 
-TEST(MFVTest, MFVParams) {
+// TEST(MFVTest, MFVParams) {
 
-  pie::MFVParams params = pie::MFVParams(1679617, 3.19, 30, 4, 4, 10);
+//   pie::MFVParams params = pie::MFVParams(NTL::ZZ(1679617), 3.19, 30, 4, 4, 10);
 
-  EXPECT_EQ(52, params.q);
-  EXPECT_EQ(37, params.sigma);
-  EXPECT_EQ(41, params.b);
-  EXPECT_EQ(41, params.n);
-  EXPECT_EQ(1558, params.w);
-  EXPECT_EQ(900000, params.l);
-}
+//   EXPECT_EQ(1679617, params.q);
+//   EXPECT_EQ(3.19, params.sigma);
+//   EXPECT_EQ(30, params.b);
+//   EXPECT_EQ(4, params.n);
+//   EXPECT_EQ(4, params.w);
+//   EXPECT_EQ(10, params.l);
+// }
 
 TEST(MFVTest, MFVKeyGen) {
 
-  pie::IDGHVPublicKey pk;
-  pie::IDGHVPrivateKey sk;
+  pie::MFVPublicKey pk;
+  pie::MFVPrivateKey sk;
+  pie::MFVEvaluationKey evk;
   pie::MFVParams params = pie::MFVParams(NTL::ZZ(1679617), 3.19, 30, 4, 4, 10);
-  pie::MFV mfv = pie::MFV(pk, sk);
+  pie::MFV mfv = pie::MFV(pk, sk, evk);
   mfv.KeyGen(params);
 
-  EXPECT_EQ(mfv.params.n, mfv.sk.length());
-  EXPECT_EQ(mfv.params.n, mfv.pk.length());
+  EXPECT_EQ(mfv.params.n, mfv.sk.s.rep.length());
+  EXPECT_EQ(mfv.params.n, mfv.pk.p0.rep.length());
+  EXPECT_EQ(mfv.params.n, mfv.pk.a.rep.length());
 }
 
 TEST(MFVTest, MFVEncryption) {
 
-  pie::IDGHVPublicKey pk;
-  pie::IDGHVPrivateKey sk;
+  pie::MFVPublicKey pk;
+  pie::MFVPrivateKey sk;
+  pie::MFVEvaluationKey evk;
   pie::MFVParams params = pie::MFVParams(NTL::ZZ(1679617), 3.19, 30, 4, 4, 10);
-  pie::MFV mfv = pie::MFV(pk, sk);
+  pie::MFV mfv = pie::MFV(pk, sk, evk);
   mfv.KeyGen(params);
 
   pie::Rational m1 = pie::Rational(2, 5);
@@ -51,14 +55,15 @@ TEST(MFVTest, MFVEncryption) {
 
 TEST(MFVTest, MFVHomomorphicAddition) {
 
-  pie::IDGHVPublicKey pk;
-  pie::IDGHVPrivateKey sk;
+  pie::MFVPublicKey pk;
+  pie::MFVPrivateKey sk;
+  pie::MFVEvaluationKey evk;
   pie::MFVParams params = pie::MFVParams(NTL::ZZ(1679617), 3.19, 30, 4, 4, 10);
-  pie::MFV mfv = pie::MFV(pk, sk);
+  pie::MFV mfv = pie::MFV(pk, sk, evk);
   mfv.KeyGen(params);
 
-  pie::Rational m1 = pie::Rational(4, 9);
-  pie::Rational m2 = pie::Rational(1, 7);
+  pie::Rational m1 = pie::Rational(2, 5);
+  pie::Rational m2 = pie::Rational(3, 4);
 
   NTL::Vec<NTL::ZZX> c1 = pie::MFVEncrypt(mfv.params, mfv.pk, m1);
   NTL::Vec<NTL::ZZX> c2 = pie::MFVEncrypt(mfv.params, mfv.pk, m2);
@@ -157,11 +162,8 @@ TEST(MFVTest, MFVMultiplyPrime) {
 
   NTL::Vec<NTL::ZZX> cs = MFVMulPrime(mfv.params, c1, c2);
 
-  EXPECT_EQ(expected_c_11, c_11);
-  EXPECT_EQ(expected_c_12, c_12);
-  EXPECT_EQ(expected_c_21, c_21);
-  EXPECT_EQ(expected_c_22, c_22);
-  EXPECT_EQ(expected_c_31, c_31);
-  EXPECT_EQ(expected_c_32, c_32);
+  EXPECT_EQ(expected_c_11, c11);
+  EXPECT_EQ(expected_c_12, c12);
+  EXPECT_EQ(expected_c_21, c21);
+  EXPECT_EQ(expected_c_22, c22);
 }
-
